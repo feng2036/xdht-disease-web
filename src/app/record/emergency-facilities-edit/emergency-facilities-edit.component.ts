@@ -7,7 +7,6 @@ import {SystemConstant} from '../../core/class/system-constant';
 import {ToastConfig} from '../../toast/toast-config';
 import {ToastType} from '../../toast/toast-type.enum';
 import {ModalService} from '../../modal/modal.service';
-import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/company-office-choose.component';
 
 @Component({
   selector: 'app-emergency-facilities-edit',
@@ -17,6 +16,7 @@ import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/comp
 export class EmergencyFacilitiesEditComponent implements OnInit {
   recordEmergencyFacilitiesEditTitle: string;
   @Input() sceneId = 0;
+  @Input() questionnaireId = 0;
   @Input() companyId = 0;
   @Input() recordData = {
     recordEmergencyFacilities: {
@@ -28,7 +28,6 @@ export class EmergencyFacilitiesEditComponent implements OnInit {
     recordEmergencyFacilitiesDataList: [{
       id: '',
       officeId: '',
-      officeName: '',
       workPlace: '',
       emergencyFacilities: '',
       number: '',
@@ -36,7 +35,8 @@ export class EmergencyFacilitiesEditComponent implements OnInit {
       technicalParameter: '',
       hazardFactors: '',
       relationId: ''
-    }]
+    }],
+    questionnaireId: 0
   };
   addFlag: boolean;
   action = '';
@@ -85,7 +85,6 @@ export class EmergencyFacilitiesEditComponent implements OnInit {
     this.recordData.recordEmergencyFacilitiesDataList[index] = {
         id: '',
         officeId: '',
-        officeName: '',
         workPlace: '',
         emergencyFacilities: '',
         number: '',
@@ -114,6 +113,7 @@ export class EmergencyFacilitiesEditComponent implements OnInit {
     if (this.addFlag) {
       url = SystemConstant.EMERGENCY_FACILITIES_ADD;
       this.recordData.recordEmergencyFacilities.sceneId = this.sceneId;
+      this.recordData.questionnaireId = this.questionnaireId;
     } else {
       url = SystemConstant.EMERGENCY_FACILITIES_EDIT;
     }
@@ -136,18 +136,9 @@ export class EmergencyFacilitiesEditComponent implements OnInit {
   }
   /**
    * 选择部门
+   * @param data
    */
-  searchEmployeeOffice(index) {
-    const modalRef = this.ngbModal.open(CompanyOfficeChooseComponent);
-    modalRef.componentInstance.companyId = this.companyId;
-    modalRef.result.then(
-      (result) => {
-        if (result.success === 'success') {
-          const sysCompanyOffice = result.sysCompanyOffice;
-          this.recordData.recordEmergencyFacilitiesDataList[index].officeId = sysCompanyOffice.id;
-          this.recordData.recordEmergencyFacilitiesDataList[index].officeName = sysCompanyOffice.officeName;
-        }
-      }
-    );
+  onDataChanged(data) {
+    this.recordData.recordEmergencyFacilitiesDataList[data.index].officeId = data.officeId;
   }
 }

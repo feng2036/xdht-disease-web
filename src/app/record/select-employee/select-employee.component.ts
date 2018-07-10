@@ -11,6 +11,8 @@ import {AlertType} from '../../modal/alert/alert-type';
 import {AlertConfig} from '../../modal/alert/alert-config';
 import {SimpleDataTableDirective} from '../../simple-data-table/simple-data-table.directive';
 import 'jquery';
+import {ToastType} from '../../toast/toast-type.enum';
+import {ToastConfig} from '../../toast/toast-config';
 declare var $: any;
 
 @Component({
@@ -20,6 +22,7 @@ declare var $: any;
 })
 export class SelectEmployeeComponent implements OnInit, AfterViewInit {
   @Input() companyId = '';
+  officeData: any;
   selectEmployeeTitle: string;
   param = {
     companyId: '',
@@ -39,6 +42,17 @@ export class SelectEmployeeComponent implements OnInit, AfterViewInit {
     private activeModal: NgbActiveModal,
     private waitService: WaitService
   ) {
+    // 查询部门信息
+    this.httpService.post(SystemConstant.OFFICE_LIST, {companyId: this.companyId}).subscribe({
+      next: (data) => {
+        this.officeData = data;
+      },
+      error: (err) => {
+        const toastCfg = new ToastConfig(ToastType.ERROR, '',  '获取部门失败！' + '失败原因：' + err, 3000);
+        this.toastService.toast(toastCfg);
+      },
+      complete: () => {}
+    });
   }
 
   ngOnInit() {
@@ -73,7 +87,8 @@ export class SelectEmployeeComponent implements OnInit, AfterViewInit {
   submitData() {
     let sysEmployee = {
       id : 0,
-      empName: ''
+      empName: '',
+      officeId: ''
     };
     const index = $('input[name="employeeRadio"]:checked').val();
     if (index === undefined || index === null) {
@@ -84,7 +99,8 @@ export class SelectEmployeeComponent implements OnInit, AfterViewInit {
       const data = this.sdt.data[index];
       sysEmployee = {
         id : data.id,
-        empName: data.empName
+        empName: data.empName,
+        officeId: data.officeId
       };
     }
     this.activeModal.close({success: 'success', sysEmployee: sysEmployee});

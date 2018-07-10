@@ -7,7 +7,6 @@ import {SystemConstant} from '../../core/class/system-constant';
 import {ToastConfig} from '../../toast/toast-config';
 import {ToastType} from '../../toast/toast-type.enum';
 import {ModalService} from '../../modal/modal.service';
-import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/company-office-choose.component';
 
 @Component({
   selector: 'app-other-protective-edit',
@@ -17,6 +16,7 @@ import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/comp
 export class OtherProtectiveEditComponent implements OnInit {
   recordOtherProtectiveEditTitle: string;
   @Input() sceneId = 0;
+  @Input() questionnaireId = 0;
   @Input() companyId = 0;
   @Input() recordData = {
     recordOtherProtective: {
@@ -28,14 +28,14 @@ export class OtherProtectiveEditComponent implements OnInit {
     recordOtherProtectiveDataList: [{
       id: '',
       officeId: '',
-      officeName: '',
       postId: '',
       workPlace: '',
       hazardFactors: '',
       protectiveFacilities: '',
       operationAndMaintenance: '',
       relationId: ''
-    }]
+    }],
+    questionnaireId: 0
   };
   sysPostList: [{
     id: '',
@@ -95,7 +95,6 @@ export class OtherProtectiveEditComponent implements OnInit {
     this.recordData.recordOtherProtectiveDataList[index] = {
         id: '',
         officeId: '',
-        officeName: '',
         postId: '',
         workPlace: '',
         hazardFactors: '',
@@ -123,6 +122,7 @@ export class OtherProtectiveEditComponent implements OnInit {
     if (this.addFlag) {
       url = SystemConstant.OTHER_PROTECTIVE_ADD;
       this.recordData.recordOtherProtective.sceneId = this.sceneId;
+      this.recordData.questionnaireId = this.questionnaireId;
     } else {
       url = SystemConstant.OTHER_PROTECTIVE_EDIT;
     }
@@ -144,19 +144,10 @@ export class OtherProtectiveEditComponent implements OnInit {
   }
   /**
    * 选择部门
+   * @param data
    */
-  searchEmployeeOffice(index) {
-    const modalRef = this.ngbModal.open(CompanyOfficeChooseComponent);
-    modalRef.componentInstance.companyId = this.companyId;
-    modalRef.result.then(
-      (result) => {
-        if (result.success === 'success') {
-          const sysCompanyOffice = result.sysCompanyOffice;
-          this.recordData.recordOtherProtectiveDataList[index].officeId = sysCompanyOffice.id;
-          this.recordData.recordOtherProtectiveDataList[index].officeName = sysCompanyOffice.officeName;
-        }
-      }
-    );
+  onDataChanged(data) {
+    this.recordData.recordOtherProtectiveDataList[data.index].officeId = data.officeId;
   }
 
 }

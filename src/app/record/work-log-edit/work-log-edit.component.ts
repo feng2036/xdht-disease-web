@@ -6,7 +6,6 @@ import {WaitService} from '../../core/wait/wait.service';
 import {SystemConstant} from '../../core/class/system-constant';
 import {ToastType} from '../../toast/toast-type.enum';
 import {ToastConfig} from '../../toast/toast-config';
-import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/company-office-choose.component';
 import {ModalService} from '../../modal/modal.service';
 
 @Component({
@@ -17,6 +16,7 @@ import {ModalService} from '../../modal/modal.service';
 export class WorkLogEditComponent implements OnInit {
   recordWorkLogEditTitle: string;
   @Input() sceneId = 0;
+  @Input() questionnaireId = 0;
   @Input() companyId = 0;
   @Input() recordData = {
     recordWorkLog: {
@@ -28,7 +28,6 @@ export class WorkLogEditComponent implements OnInit {
     recordWorkLogDataList: [{
       id: '',
       companyOfficeId: '',
-      officeName: '',
       postId: '',
       personOfClass: '',
       workHours: '',
@@ -37,7 +36,8 @@ export class WorkLogEditComponent implements OnInit {
       hazardFactors: '',
       remarks: '',
       relationId: ''
-    }]
+    }],
+    questionnaireId: 0
   };
   sysPostList: [{
     'id': '',
@@ -98,7 +98,6 @@ export class WorkLogEditComponent implements OnInit {
     this.recordData.recordWorkLogDataList[index] = {
       id : '',
       companyOfficeId: '',
-      officeName: '',
       postId: '',
       personOfClass: '',
       workHours: '',
@@ -128,11 +127,11 @@ export class WorkLogEditComponent implements OnInit {
     if (this.addFlag) {
       url = SystemConstant.WORK_LOG_ADD;
       this.recordData.recordWorkLog.sceneId = this.sceneId;
+      this.recordData.questionnaireId = this.questionnaireId;
     } else {
       url = SystemConstant.WORK_LOG_EDIT;
     }
     // 保存调查表
-    console.log('url:' + url);
     this.httpService.post(url, this.recordData).subscribe({
       next: (data) => {
         const toastCfg = new ToastConfig(ToastType.SUCCESS, '', this.action + '操作成功！', 3000);
@@ -148,21 +147,13 @@ export class WorkLogEditComponent implements OnInit {
     });
     this.waitService.wait(false);
   }
+
   /**
    * 选择部门
+   * @param data
    */
-  searchEmployeeOffice(index) {
-    const modalRef = this.ngbModal.open(CompanyOfficeChooseComponent);
-    modalRef.componentInstance.companyId = this.companyId;
-    modalRef.result.then(
-      (result) => {
-        if (result.success === 'success') {
-          const sysCompanyOffice = result.sysCompanyOffice;
-          this.recordData.recordWorkLogDataList[index].companyOfficeId = sysCompanyOffice.id;
-          this.recordData.recordWorkLogDataList[index].officeName = sysCompanyOffice.officeName;
-        }
-      }
-    );
+  onDataChanged(data) {
+    this.recordData.recordWorkLogDataList[data.index].companyOfficeId = data.officeId;
   }
 
 }

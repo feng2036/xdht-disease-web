@@ -6,7 +6,6 @@ import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SystemConstant} from '../../core/class/system-constant';
 import {ToastType} from '../../toast/toast-type.enum';
 import {ToastConfig} from '../../toast/toast-config';
-import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/company-office-choose.component';
 import {ModalService} from '../../modal/modal.service';
 
 @Component({
@@ -17,6 +16,7 @@ import {ModalService} from '../../modal/modal.service';
 export class PostPersonnelEditComponent implements OnInit {
   recordPostPersonnelEditTitle: string;
   @Input() sceneId = 0;
+  @Input() questionnaireId = 0;
   @Input() companyId = 0;
   @Input() recordData = {
     recordPostPersonnel: {
@@ -28,7 +28,6 @@ export class PostPersonnelEditComponent implements OnInit {
     recordPostPersonnelDataList: [{
       id: '',
       companyOfficeId: '',
-      officeName: '',
       postId: '',
       perShift: '',
       totalNumber: '',
@@ -36,7 +35,8 @@ export class PostPersonnelEditComponent implements OnInit {
       classOfDate: '',
       hourOfClass: '',
       postPersonnelId: ''
-    }]
+    }],
+    questionnaireId: 0
   };
   sysPostList: [{
     'id': '',
@@ -97,7 +97,6 @@ export class PostPersonnelEditComponent implements OnInit {
     this.recordData.recordPostPersonnelDataList[index] = {
         id: '',
         companyOfficeId: '',
-        officeName: '',
         postId: '',
         perShift: '',
         totalNumber: '',
@@ -125,6 +124,7 @@ export class PostPersonnelEditComponent implements OnInit {
     if (this.addFlag) {
       url = SystemConstant.POST_PERSONNEL_ADD;
       this.recordData.recordPostPersonnel.sceneId = this.sceneId;
+      this.recordData.questionnaireId = this.questionnaireId;
     } else {
       url = SystemConstant.POST_PERSONNEL_EDIT;
     }
@@ -147,19 +147,11 @@ export class PostPersonnelEditComponent implements OnInit {
 
   /**
    * 选择部门
+   * @param data
    */
-  searchEmployeeOffice(index) {
-    const modalRef = this.ngbModal.open(CompanyOfficeChooseComponent);
-    modalRef.componentInstance.companyId = this.companyId;
-    modalRef.result.then(
-      (result) => {
-        if (result.success === 'success') {
-          const sysCompanyOffice = result.sysCompanyOffice;
-          this.recordData.recordPostPersonnelDataList[index].companyOfficeId = sysCompanyOffice.id;
-          this.recordData.recordPostPersonnelDataList[index].officeName = sysCompanyOffice.officeName;
-        }
-      }
-    );
+  onDataChanged(data) {
+    this.recordData.recordPostPersonnelDataList[data.index].companyOfficeId = data.officeId;
   }
+
 
 }

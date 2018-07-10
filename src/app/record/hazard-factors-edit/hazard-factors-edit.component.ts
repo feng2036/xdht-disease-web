@@ -6,7 +6,6 @@ import {WaitService} from '../../core/wait/wait.service';
 import {SystemConstant} from '../../core/class/system-constant';
 import {ToastType} from '../../toast/toast-type.enum';
 import {ToastConfig} from '../../toast/toast-config';
-import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/company-office-choose.component';
 import {ModalService} from '../../modal/modal.service';
 
 @Component({
@@ -17,6 +16,7 @@ import {ModalService} from '../../modal/modal.service';
 export class HazardFactorsEditComponent implements OnInit {
   recordHazardFactorsEditTitle: string;
   @Input() sceneId = 0;
+  @Input() questionnaireId = 0;
   @Input() companyId = 0;
   @Input() recordData = {
     recordHazardFactors: {
@@ -35,7 +35,8 @@ export class HazardFactorsEditComponent implements OnInit {
       exposureTime: '',
       remarks: '',
       relationId: ''
-    }]
+    }],
+    questionnaireId: 0
   };
   addFlag: boolean;
   action = '';
@@ -111,6 +112,7 @@ export class HazardFactorsEditComponent implements OnInit {
     if (this.addFlag) {
       url = SystemConstant.HAZARD_FACTORS_ADD;
       this.recordData.recordHazardFactors.sceneId = this.sceneId;
+      this.recordData.questionnaireId = this.questionnaireId;
     } else {
       url = SystemConstant.HAZARD_FACTORS_EDIT;
     }
@@ -133,18 +135,9 @@ export class HazardFactorsEditComponent implements OnInit {
 
   /**
    * 选择部门
+   * @param data
    */
-  searchEmployeeOffice(index) {
-    const modalRef = this.ngbModal.open(CompanyOfficeChooseComponent);
-    modalRef.componentInstance.companyId = this.companyId;
-    modalRef.result.then(
-      (result) => {
-        if (result.success === 'success') {
-          const sysCompanyOffice = result.sysCompanyOffice;
-          this.recordData.recordHazardFactorsDataList[index].officeId = sysCompanyOffice.id;
-          this.recordData.recordHazardFactorsDataList[index].officeName = sysCompanyOffice.officeName;
-        }
-      }
-    );
+  onDataChanged(data) {
+    this.recordData.recordHazardFactorsDataList[data.index].officeId = data.officeId;
   }
 }

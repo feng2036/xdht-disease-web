@@ -9,8 +9,9 @@ import {ToastType} from '../../toast/toast-type.enum';
 import {ToastConfig} from '../../toast/toast-config';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {EmployeeEditComponent} from '../employee-edit/employee-edit.component';
-import {EmpoiyeeInfoComponent} from '../empoiyee-info/empoiyee-info.component';
 import {ConfirmConfig} from '../../modal/confirm/confirm-config';
+import {Router} from '@angular/router';
+import {TitleService} from '../../title.service';
 
 @Component({
   selector: 'app-employee-manage',
@@ -39,8 +40,12 @@ export class EmployeeManageComponent implements OnInit, AfterViewInit {
     private waitService: WaitService,
     private modalService: ModalService,
     private httpService: HttpService,
-    private toastService: ToastService
-  ) { }
+    private toastService: ToastService,
+    private router: Router,
+    private  titleService: TitleService
+  ) {
+    this.titleService.titleEventEmitter.emit('职工档案信息');
+  }
 
   ngOnInit() {
     this.url = SystemConstant.EMPLOYEE_PAGE_LIST;
@@ -64,33 +69,9 @@ export class EmployeeManageComponent implements OnInit, AfterViewInit {
    * 查看职工信息
    */
   selectEmployeeInfo(employeeId) {
-    // 获取职工数据
-    this.httpService.get(SystemConstant.EMPLOYEE_DETAIL + '/' + employeeId).subscribe({
-      next: (data) => {
-        this.openEmployeeInfo(data);
-      },
-      error: (err) => {
-        const toastCfg = new ToastConfig(ToastType.ERROR, '', '获取职工详情失败！' + '失败原因：' + err, 3000);
-        this.toastService.toast(toastCfg);
-      },
-      complete: () => {}
-    });
+    this.router.navigate(['/main/record/employeeDetail'], {queryParams: {id: employeeId}});
   }
 
-  /**
-   * 打开职工详情对话框
-   */
-  openEmployeeInfo(employeeData) {
-    const modalRef = this.ngbModal.open(EmpoiyeeInfoComponent);
-    modalRef.componentInstance.sysEmpoiyeeRequest = employeeData;
-    modalRef.result.then(
-      (result) => {
-        if (result === 'success') {
-          this.search();
-        }
-      }
-    );
-  }
   /**
    * 新增职工
    */

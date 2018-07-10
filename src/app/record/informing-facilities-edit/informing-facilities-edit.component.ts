@@ -7,7 +7,6 @@ import {ToastService} from '../../toast/toast.service';
 import {ToastConfig} from '../../toast/toast-config';
 import {ToastType} from '../../toast/toast-type.enum';
 import {ModalService} from '../../modal/modal.service';
-import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/company-office-choose.component';
 
 @Component({
   selector: 'app-informing-facilities-edit',
@@ -17,6 +16,7 @@ import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/comp
 export class InformingFacilitiesEditComponent implements OnInit {
   recordInformingFacilitiesEditTitle: string;
   @Input() sceneId = 0;
+  @Input() questionnaireId = 0;
   @Input() companyId = 0;
   @Input() recordData = {
     recordInformingFacilities: {
@@ -28,14 +28,14 @@ export class InformingFacilitiesEditComponent implements OnInit {
     recordInformingFacilitiesDataList: [{
       id: '',
       companyOfficeId: '',
-      officeName: '',
       processName: '',
       hazardFactors: '',
       informingFacilities: '',
       settingPlace: '',
       remarks: '',
       relationId: ''
-    }]
+    }],
+    questionnaireId: 0
   };
   addFlag: boolean;
   action = '';
@@ -84,7 +84,6 @@ export class InformingFacilitiesEditComponent implements OnInit {
     this.recordData.recordInformingFacilitiesDataList[index] = {
         id: '',
         companyOfficeId: '',
-        officeName: '',
         processName: '',
         hazardFactors: '',
         informingFacilities: '',
@@ -111,6 +110,7 @@ export class InformingFacilitiesEditComponent implements OnInit {
     if (this.addFlag) {
       url = SystemConstant.INFORMING_FACILITIES_ADD;
       this.recordData.recordInformingFacilities.sceneId = this.sceneId;
+      this.recordData.questionnaireId = this.questionnaireId;
     } else {
       url = SystemConstant.INFORMING_FACILITIES_EDIT;
     }
@@ -133,18 +133,9 @@ export class InformingFacilitiesEditComponent implements OnInit {
 
   /**
    * 选择部门
+   * @param data
    */
-  searchEmployeeOffice(index) {
-    const modalRef = this.ngbModal.open(CompanyOfficeChooseComponent);
-    modalRef.componentInstance.companyId = this.companyId;
-    modalRef.result.then(
-      (result) => {
-        if (result.success === 'success') {
-          const sysCompanyOffice = result.sysCompanyOffice;
-          this.recordData.recordInformingFacilitiesDataList[index].companyOfficeId = sysCompanyOffice.id;
-          this.recordData.recordInformingFacilitiesDataList[index].officeName = sysCompanyOffice.officeName;
-        }
-      }
-    );
+  onDataChanged(data) {
+    this.recordData.recordInformingFacilitiesDataList[data.index].companyOfficeId = data.officeId;
   }
 }

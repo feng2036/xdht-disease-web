@@ -7,7 +7,6 @@ import {ToastType} from '../../toast/toast-type.enum';
 import {ModalService} from '../../modal/modal.service';
 import {WaitService} from '../../core/wait/wait.service';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {CompanyOfficeChooseComponent} from '../../sys/company-office-choose/company-office-choose.component';
 
 @Component({
   selector: 'app-auxiliary-health-edit',
@@ -18,6 +17,7 @@ export class AuxiliaryHealthEditComponent implements OnInit {
 
   recordAuxiliaryHealthEditTitle: string;
   @Input() sceneId = 0;
+  @Input() questionnaireId = 0;
   @Input() companyId = 0;
   @Input() recordData = {
     recordAuxiliaryHealth: {
@@ -33,7 +33,8 @@ export class AuxiliaryHealthEditComponent implements OnInit {
       workPlace: '',
       hygienicRoom: '',
       livingRoom: ''
-    }]
+    }],
+    questionnaireId: 0
   };
   addFlag: boolean;
   action = '';
@@ -105,6 +106,7 @@ export class AuxiliaryHealthEditComponent implements OnInit {
     if (this.addFlag) {
       url = SystemConstant.AUXILIARY_HEALTH_ADD;
       this.recordData.recordAuxiliaryHealth.sceneId = this.sceneId;
+      this.recordData.questionnaireId = this.questionnaireId;
     } else {
       url = SystemConstant.AUXILIARY_HEALTH_EDIT;
     }
